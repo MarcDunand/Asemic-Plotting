@@ -41,36 +41,29 @@ class AsemicSketch(vsketch.SketchClass):
             self.slash(vsk, xPos+accLen, yPos, thisCharH, accentS/vDiv, accentE/vDiv)
             for p in range(maxh+1):
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos-0.7, yPos, 6, p/4)
                     self.accentLine(vsk, xPos-accLen, yPos, accLen, thisCharH, p/vDiv)
             for p in range(0, accentS):
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos+0.7, yPos, 6, p/4)
                     self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
             for p in range(accentS, accentE+1):
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos+0.7*2, yPos, 6, p/4)
                     self.accentLine(vsk, xPos+accLen, yPos, accLen, thisCharH, p/vDiv)
                     w = 3
 
             for p in range(accentE+1, maxh+1):
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos+0.7, yPos, 6, p/4)
                     self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
 
             for p in range(maxh+1, accentE+1):
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos, yPos, 6, p/4)
                     self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
             
         else:
             for p in range(maxh+1):
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos+0.7, yPos, 6, p/4)
                     self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
                     w = 2
                 if rand.random() < dotProb:
-                    #self.dot(vsk, xPos-0.7, yPos, 6, p/4)
                     self.accentLine(vsk, xPos-accLen, yPos, accLen, thisCharH, p/vDiv)
                     w = 2
 
