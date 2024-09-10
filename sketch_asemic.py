@@ -19,6 +19,7 @@ spaceLen = 0                        #how long spaces between words are
 
 class AsemicSketch(vsketch.SketchClass):
     #master change
+    #normal comment
     def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e):
         vsk.line(x+(h/2)*s, y-h*s, x+(h/2)*e, y-h*e)
 
