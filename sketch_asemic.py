@@ -27,9 +27,10 @@ class AsemicSketch(vsketch.SketchClass):
     def accentLine(self, vsk: vsketch.Vsketch, x, y, l, h, pos):
         vsk.line(x+(h/2)*pos, y-h*pos, x+(h/2)*pos+l, y-h*pos)
 
+
     def drawChar(self, vsk: vsketch.Vsketch, seed, xPos, yPos):
         rand.seed(seed)
-        w = 1
+        w = 1  #width of the character in # of verticle slashes
         thisCharH = charH
         maxh = rand.randrange(math.ceil(vDiv/2), vDiv+1)
         self.slash(vsk, xPos, yPos, thisCharH, 0, maxh/vDiv)
@@ -79,7 +80,7 @@ class AsemicSketch(vsketch.SketchClass):
 
 
 
-
+    
     def draw(self, vsk: vsketch.Vsketch) -> None:
         vsk.size("letter", landscape=False)
         vsk.scale("mm")
