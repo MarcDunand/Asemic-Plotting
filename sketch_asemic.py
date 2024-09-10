@@ -11,8 +11,8 @@ accLen = 0.6                        #how long horizontal strokes are
 charH = 5                           #maximum height of characters
 wordStdv = 10                       #standard deviation of word length
 drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
-wiggleMin, wiggleMax = -0.7, 1    #maximum verticle offset of one char from the next
-spaceLen = 2                        #how long spaces between words are
+wiggleMin, wiggleMax = -1, 0.7      #maximum verticle offset of one char from the next
+spaceLen = 0                        #how long spaces between words are
 
 
 
