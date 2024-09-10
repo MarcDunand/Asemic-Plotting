@@ -3,7 +3,7 @@ import random as rand
 import math
 import numpy as np
 
-#tertiary only new addition
+#main branch
 
 vDiv = 4                            #number of verticle divisions there are on a character
 dotProb = 0.2                       #chance of an accent being added in any given spot
