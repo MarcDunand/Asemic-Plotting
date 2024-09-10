@@ -14,7 +14,7 @@ drawAlphabet = False                #determines if the alphabet of characters is
 wiggleMin, wiggleMax = -1, 0.7      #maximum verticle offset of one char from the next
 spaceLen = 0                        #how long spaces between words are
 
-
+#comment style
 
 
 class AsemicSketch(vsketch.SketchClass):
