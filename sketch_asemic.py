@@ -3,63 +3,79 @@ import random as rand
 import math
 import numpy as np
 
+aphabetLen = 30                      #the number of characters in the language's alphabet
 vDiv = 4                            #number of verticle divisions there are on a character
 dotProb = 0.2                       #chance of an accent being added in any given spot
 accLen = 0.6                        #how long horizontal strokes are
 charH = 5                           #maximum height of characters
 wordStdv = 10                       #standard deviation of word length
-drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
-wiggleMin, wiggleMax = -1, 0.7      #maximum verticle offset of one char from the next
+drawAlphabet = True                 #determines if the alphabet of characters is drawn at the top
+wiggleMin, wiggleMax = -0.8, 0.6    #maximum verticle offset of one char from the next
 spaceLen = 0                        #how long spaces between words are
+charTilt = 0.4                      #how much each char's verticle lines tilt as a ratio to their height
+startVar = 5                        #how much does the start of each line vary
 
 class AsemicSketch(vsketch.SketchClass):
-    def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e):
-        vsk.line(x+(h/2)*s, y-h*s, x+(h/2)*e, y-h*e)
 
-    def dot(self, vsk: vsketch.Vsketch, x, y, h, pos):
-        vsk.point(x+(h/2)*pos, y-h*pos)
+    
 
-    def accentLine(self, vsk: vsketch.Vsketch, x, y, l, h, pos):
-        vsk.line(x+(h/2)*pos, y-h*pos, x+(h/2)*pos+l, y-h*pos)
+    #creates a verticle slash for this char.
+    #x: x cood of this slash, y: y coord of this slash, h: the theoretical maximum slash height
+    #s: start %, what percent up h does this slash start, e: end %, what percent up h does this slash end
+    #t: tilt, relative to e-s, how tilted is this slash in the x direction
+    def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e, t):
+        vsk.line(x+h*s*t, y-h*s, x+h*e*t, y-h*e)
+
+
+    #creates a tiny horizontal line branching from a verticle slash
+    #x: x coord of this accent, y: y coord of this slash, l: the length of this slash
+    #h: the theoretical maximum slash height, pos: at what percent of h this accent is placed
+    #t: the tilt on this accent line
+    def accentLine(self, vsk: vsketch.Vsketch, x, y, l, h, pos, t):
+        #vsk.line(x+pos*t, y-h*pos, x+pos*t-l, y-h*pos)
+        vsk.line(x+h*t*pos, y-h*pos, x+h*t*pos+l, y-h*pos)
+
 
 
     def drawChar(self, vsk: vsketch.Vsketch, seed, xPos, yPos):
         rand.seed(seed)
-        w = 1  #width of the character in # of verticle slashes
-        thisCharH = charH
-        maxh = rand.randrange(math.ceil(vDiv/2), vDiv+1)
-        self.slash(vsk, xPos, yPos, thisCharH, 0, maxh/vDiv)
-        if rand.random() < 0.5:
+        w = 1                                               #width of the character in # of verticle slashes
+        thisCharH = charH                                   #the maximum theoretical height the char could be
+        thisCharTilt = charTilt                             #the tilt that this char is at
+        maxh = rand.randrange(math.ceil(vDiv/2), vDiv+1)    #the actual height of this char as a percentage of thisCharH
+
+        self.slash(vsk, xPos, yPos, thisCharH, 0, maxh/vDiv, thisCharTilt)  #draws the base slash that all chars have
+        if rand.random() < 0.5:  #conditionally adds a second slash
             w = 2
             accentS = rand.randrange(0, maxh-1)
             accentE = rand.randrange(math.ceil(vDiv/2), vDiv+1)
-            self.slash(vsk, xPos+accLen, yPos, thisCharH, accentS/vDiv, accentE/vDiv)
+            self.slash(vsk, xPos+accLen, yPos, thisCharH, accentS/vDiv, accentE/vDiv, thisCharTilt)
             for p in range(maxh+1):
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos-accLen, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos-accLen, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
             for p in range(0, accentS):
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
             for p in range(accentS, accentE+1):
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos+accLen, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos+accLen, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
                     w = 3
 
             for p in range(accentE+1, maxh+1):
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
 
             for p in range(maxh+1, accentE+1):
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
             
         else:
             for p in range(maxh+1):
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
                     w = 2
                 if rand.random() < dotProb:
-                    self.accentLine(vsk, xPos-accLen, yPos, accLen, thisCharH, p/vDiv)
+                    self.accentLine(vsk, xPos-accLen, yPos, accLen, thisCharH, p/vDiv, thisCharTilt)
                     w = 2
 
         return w*accLen
@@ -78,7 +94,7 @@ class AsemicSketch(vsketch.SketchClass):
 
         #sets the IDs for each of the chars on the page
         seedSet = []
-        for i in range(30):
+        for i in range(aphabetLen):
             seedSet.append(rand.randrange(0, 1000000))
 
         charList = []  #pregenerates all characters that will be written (with some extra padding)
@@ -105,7 +121,8 @@ class AsemicSketch(vsketch.SketchClass):
         charCount = 0
         prevLineWiggle = [0]*lineLen
         while(yPos < pageLen):  #until bottom of page
-            xPos = 0
+            xPos = rand.uniform(0, startVar)
+            print(xPos)
             newLine = False
             lineWiggle = [0]*lineLen
             while xPos < lineLen and not newLine:  #until end of line
