@@ -3,8 +3,6 @@ import random as rand
 import math
 import numpy as np
 
-#main branch updated to github
-
 vDiv = 4                            #number of verticle divisions there are on a character
 dotProb = 0.2                       #chance of an accent being added in any given spot
 accLen = 0.6                        #how long horizontal strokes are
@@ -14,12 +12,7 @@ drawAlphabet = False                #determines if the alphabet of characters is
 wiggleMin, wiggleMax = -1, 0.7      #maximum verticle offset of one char from the next
 spaceLen = 0                        #how long spaces between words are
 
-#comment style
-
-
 class AsemicSketch(vsketch.SketchClass):
-    #master change
-    #normal comment
     def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e):
         vsk.line(x+(h/2)*s, y-h*s, x+(h/2)*e, y-h*e)
 
