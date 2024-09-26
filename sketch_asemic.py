@@ -5,21 +5,24 @@ import numpy as np
 from dataclasses import dataclass, replace
 from typing import List
 
+pageLen = 270                       #the height of our writing block in mm
+lineLen = 210                       #the maximum length of a line of text
 aphabetLen = 10                     #the number of characters in the language's alphabet
 vDiv = 6                            #number of verticle divisions there are on a character
 dotProb = 0.2                       #chance of an accent being added in any given spot
 accLen = 0.6                        #how long horizontal strokes are
-charH = 4                           #maximum height of characters
-charSizeNoise = 1.05                 #how much the size of letters can vary, 1 is no variation, n >= 1
+charH = 3                           #maximum height of characters
+charSizeNoise = 1.05                #how much the size of letters can vary, 1 is no variation, n >= 1
 wordStdv = 10                       #standard deviation of word length
-newLineChance = 0.025                #chance that the end of a word also triggers a new line
+newLineChance = 0.025               #chance that the end of a word also triggers a new line
 drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
-wiggleMin, wiggleMax = -0.3, 0.35    #maximum verticle offset of one char from the next
+wiggleMin, wiggleMax = -0.3, 0.35   #maximum verticle offset of one char from the next
 lineMin, lineMax = -5, 3            #maximum horizontal offset from one line to the next
+lineSpacing = 1.1                   #verticle spacing between lines. 1 is no spacing
 spaceLen = 1                        #how long spaces between words are
-cairnLen = -0.2                        #how long spaces between characters are
+cairnLen = -0.5                     #how long spaces between characters are
 charTilt = 0.2                      #how much each char's verticle lines tilt as a ratio to their height
-charTiltNoise = 0.03                 #how much the tilt on a character's slashes varies
+charTiltNoise = 0.03                #how much the tilt on a character's slashes varies
 seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
 
 
@@ -69,16 +72,13 @@ class AsemicSketch(vsketch.SketchClass):
         w = 1                                                                   #width of the character in # of verticle slashes
         thisCharH = charH*rand.uniform(1/charSizeNoise, 1*charSizeNoise)        #the maximum theoretical height the char could be
         thisCharTilt = charTilt + rand.uniform(-charTiltNoise, charTiltNoise)   #the tilt that this char is at
-        #maxh = rand.randrange(math.ceil(vDiv/2), vDiv+1)                       #the actual height of this char as a percentage of thisCharH
-        maxh = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))   #should be equivalent to the above line
+        maxh = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))   #the actual height of this char as a percentage of thisCharH
         
         self.slash(vsk, xPos, yPos, thisCharH, 0, maxh/vDiv, thisCharTilt)      #draws the base slash that all chars have
         
         if charSeed.query() < 0.5:  #conditionally adds a second slash
             w = 2
-            #accentS = rand.randrange(0, maxh-1)
             accentS = int(charSeed.query()*(maxh-1))  #should be equivalent to above line
-            #accentE = rand.randrange(math.ceil(vDiv/2), vDiv+1)
             accentE = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))  #should be equivalent to above line
             self.slash(vsk, xPos+accLen, yPos, thisCharH, accentS/vDiv, accentE/vDiv, thisCharTilt)
             for p in range(maxh+1):
@@ -120,9 +120,6 @@ class AsemicSketch(vsketch.SketchClass):
         vsk.size("letter", landscape=False)
         vsk.scale("mm")
 
-        lineLen = 210
-        pageLen = 270
-
         #sets the IDs for each of the chars on the page
         charSeedSet = []
         for i in range(aphabetLen):
@@ -163,7 +160,7 @@ class AsemicSketch(vsketch.SketchClass):
             prevLinexPos = xPos
             #print(xPos)
             newLine = False
-            lineWiggle = [0]*lineLen
+            lineWiggle = [-1]*lineLen
             while xPos < lineLen and not newLine:  #until end of line
                 if int(xPos) - 1 == -1:  #if at the start of line determine yoffset independently of previous character
                     yOff = max(prevLineWiggle[int(xPos)], rand.uniform(10*wiggleMin, 10*wiggleMax))
@@ -185,9 +182,14 @@ class AsemicSketch(vsketch.SketchClass):
 
 
                 charCount += 1
-
-            prevLineWiggle[:len(lineWiggle)] = lineWiggle
-            yPos += charH*1.2  #moves down by one line
+            
+            for i in range(lineLen):
+                if lineWiggle[i] == -1:
+                    prevLineWiggle[i] = max(0, prevLineWiggle[i]-charH*lineSpacing)
+                else:
+                    prevLineWiggle[i] = lineWiggle[i]
+            
+            yPos += charH*lineSpacing  #moves down by one line
 
 
     def finalize(self, vsk: vsketch.Vsketch) -> None:
