@@ -20,7 +20,7 @@ wiggleMin, wiggleMax = -0.3, 0.35   #maximum verticle offset of one char from th
 lineMin, lineMax = -5, 3            #maximum horizontal offset from one line to the next
 lineSpacing = 1.1                   #verticle spacing between lines. 1 is no spacing
 spaceLen = 1                        #how long spaces between words are
-cairnLen = -0.5                     #how long spaces between characters are
+cairnLen = -0.5                        #how long spaces between characters are
 charTilt = 0.2                      #how much each char's verticle lines tilt as a ratio to their height
 charTiltNoise = 0.03                #how much the tilt on a character's slashes varies
 seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
@@ -38,7 +38,7 @@ class CharSeed:
     def query(self) -> int:
         self.idx += 1
         if self.idx >= len(self.vals):
-            print("ERROR: querried more than the number of vals, looping back...")
+            print("ERROR: querried more than the number of unique vals, looping back...")
             self.idx = 0
         return self.vals[self.idx]
     
@@ -141,14 +141,15 @@ class AsemicSketch(vsketch.SketchClass):
                 charCount = 0
                 wordLen = int(abs(np.random.normal(0, wordStdv))) + 1
 
+
         #draws the set of characters at the top of the page
-        
         yPos = 0
         if drawAlphabet:
             for i in range(aphabetLen):
                 self.drawChar(vsk, charSeedSet[i].Copy(), i*4, 15)
             yPos = 30
         
+
         #draws in all characters on the page
         xPos = 0
         prevLinexPos = xPos
@@ -158,14 +159,13 @@ class AsemicSketch(vsketch.SketchClass):
             xPos = prevLinexPos + rand.uniform(lineMin, lineMax)
             xPos = max(0, xPos)
             prevLinexPos = xPos
-            #print(xPos)
             newLine = False
             lineWiggle = [-1]*lineLen
             while xPos < lineLen and not newLine:  #until end of line
                 if int(xPos) - 1 == -1:  #if at the start of line determine yoffset independently of previous character
-                    yOff = max(prevLineWiggle[int(xPos)], rand.uniform(10*wiggleMin, 10*wiggleMax))
+                    yOff = max(prevLineWiggle[math.floor(xPos)], rand.uniform(10*wiggleMin, 10*wiggleMax))
                 else:                    #otherwise determine it based on prev char
-                    yOff = max(prevLineWiggle[int(xPos)], (lineWiggle[int(xPos) - 1]) + rand.uniform(wiggleMin, wiggleMax))  #determine y offset in terms of previous char and the char above
+                    yOff = max(prevLineWiggle[math.floor(xPos)], (lineWiggle[int(xPos) - 1]) + rand.uniform(wiggleMin, wiggleMax))  #determine y offset in terms of previous char and the char above
 
                 if yPos + yOff >= pageLen:  #if hit bottom of page
                     break
@@ -173,15 +173,20 @@ class AsemicSketch(vsketch.SketchClass):
                 if charList[charCount] == -2:  #starts newline
                     newLine = True
                 elif charList[charCount] == -1:  #draws space
-                    lineWiggle[int(xPos) : int(xPos + spaceLen)] = [yOff]*spaceLen
+                    lineWiggle[math.floor(xPos) : math.floor(xPos + spaceLen)] = [yOff]*(math.floor(xPos + spaceLen)-math.floor(xPos))
                     xPos += spaceLen
                 else:  #draws char
                     xDiff = self.drawChar(vsk, charList[charCount], xPos, yPos + yOff)
-                    lineWiggle[int(xPos) : int(xPos + xDiff)] = [yOff]*(int(xPos + xDiff) - int(xPos))
-                    xPos += xDiff + cairnLen
+                    xDiff += cairnLen
+                    lineWiggle[math.floor(xPos) : math.floor(xPos + xDiff)] = [yOff]*(math.floor(xPos + xDiff) - math.floor(xPos))
+                    xPos += xDiff
 
 
                 charCount += 1
+
+            #print(len(lineWiggle))
+
+            
             
             for i in range(lineLen):
                 if lineWiggle[i] == -1:
@@ -190,6 +195,8 @@ class AsemicSketch(vsketch.SketchClass):
                     prevLineWiggle[i] = lineWiggle[i]
             
             yPos += charH*lineSpacing  #moves down by one line
+
+            
 
 
     def finalize(self, vsk: vsketch.Vsketch) -> None:
