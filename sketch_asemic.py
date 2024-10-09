@@ -7,28 +7,29 @@ from typing import List
 
 pageLen = 270                       #the height of our writing block in mm
 lineLen = 210                       #the maximum length of a line of text
-aphabetLen = 10                     #the number of characters in the language's alphabet
+aphabetLen = 30                     #the number of characters in the language's alphabet
 vDiv = 6                            #number of verticle divisions there are on a character
 dotProb = 0.3                       #chance of an accent being added in any given spot
-accLen = 0.6                        #how long horizontal strokes are
-charH = 4                           #maximum height of characters
-charSizeNoise = 1.05                #how much the size of letters can vary, 1 is no variation, n >= 1
+accLen = 0.8                        #how long horizontal strokes are
+charH = 5.5                           #maximum height of characters
+charSizeNoise = 1.2                #how much the size of letters can vary, 1 is no variation, n >= 1
+charSizeLineNoise = 1.4             #how much does the character size along an entire line vary (affects all characters on a line)
 wordStdv = 10                       #standard deviation of word length
-newLineChance = 0.01               #chance that the end of a word also triggers a new line
+newLineChance = 0.01                #chance that the end of a word also triggers a new line
 drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
-wiggleMin, wiggleMax = -0.3, 0.4   #maximum verticle offset of one char from the next
+wiggleMin, wiggleMax = -0.3, 0.4    #maximum verticle offset of one char from the next
 lineMin, lineMax = -5, 3            #maximum horizontal offset from one line to the next
-lineSpacing = 1.05                   #verticle spacing between lines. 1 is no spacing
-spaceLen = 1                        #how long spaces between words are
+lineSpacing = 1.1                  #verticle spacing between lines. 1 is no spacing
+spaceLen = 1.5                        #how long spaces between words are
 cairnLen = -0.5                     #how long spaces between characters are
 charTilt = 0.2                      #how much each char's verticle lines tilt as a ratio to their height
-charTiltNoise = 0.2                #how much the tilt on a character's slashes varies
+charTiltNoise = 0.2                 #how much the tilt on a character's slashes varies
 seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
-maxShrink = 0.4                     #how much smaller letters get at maximum over the height of the page
-scribbleSize = 1                      #how much larger than the characters are the scribbles that overlay them
+maxShrink = 0.3                     #how much smaller letters get at maximum over the height of the page
+scribbleSize = 1                    #how much larger than the characters are the scribbles that overlay them
 scribbleEnd = 0.7                   #chance of a scribble ending at the end of a word
-featureChance = 0.03               #chance of starting a scribble
-scribbleChance = 1                #given that a feature will be drawn, what is the chance that the feature is a scribble
+featureChance = 0.03                #chance of starting a feature
+scribbleChance = 1                  #given that a feature will be drawn, what is the chance that the feature is a scribble
 
 
 
@@ -101,9 +102,9 @@ class AsemicSketch(vsketch.SketchClass):
 
 
 
-    def drawChar(self, vsk: vsketch.Vsketch, charSeed, xPos, yPos, yProg):
+    def drawChar(self, vsk: vsketch.Vsketch, charSeed, xPos, yPos, yProg, thisCharH):
         w = 1                                                                   #width of the character in # of verticle slashes
-        thisCharH = charH*rand.uniform(1/charSizeNoise, 1*charSizeNoise)*(1-yProg*maxShrink)        #the maximum theoretical height the char could be
+        #thisCharH = charH*rand.uniform(1/charSizeNoise, 1*charSizeNoise)*(1-yProg*maxShrink)        
         thisCharTilt = charTilt + rand.uniform(-charTiltNoise, charTiltNoise)   #the tilt that this char is at
         maxh = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))   #the actual height of this char as a percentage of thisCharH
         
@@ -196,6 +197,12 @@ class AsemicSketch(vsketch.SketchClass):
             lineWiggle = [-1]*lineLen
             x1Crossed = -1
             y1Crossed = -1
+            thisLineCharSizeNoise = rand.uniform(1/charSizeLineNoise, 1*charSizeLineNoise)
+
+            yPos += thisLineCharSizeNoise*charH*lineSpacing*(1-(yProg*maxShrink)/2.2)  #moves down by one line
+            # if rand.random() < 0.2:
+            #     yPos += rand.uniform(4, 6)
+
             while xPos < lineLen and not newLine:  #until end of line
                 if int(xPos) - 1 == -1:  #if at the start of line determine yoffset independently of previous character
                     yOff = max(prevLineWiggle[math.floor(xPos)], rand.uniform(10*wiggleMin, 10*wiggleMax))
@@ -216,7 +223,7 @@ class AsemicSketch(vsketch.SketchClass):
                     
                     if x1Crossed != -1 and rand.random() < scribbleEnd:
                         if rand.random() < scribbleChance:
-                            self.drawScribble(vsk, x1Crossed, y1Crossed, xPos-spaceLen, yPos+yOff, charH*(1-yProg*maxShrink)*scribbleSize, 0.4, 0.4, 1)
+                            self.drawScribble(vsk, x1Crossed, y1Crossed, xPos-spaceLen, yPos+yOff, charH*(1-yProg*maxShrink)*scribbleSize, 0.4, 0.6, 2)
                         else:
                             self.drawUnderline(vsk, x1Crossed, y1Crossed, xPos-spaceLen, yPos+yOff, 3, 0.1)  #deactivated, doesnt look great
                         x1Crossed = -1
@@ -225,7 +232,8 @@ class AsemicSketch(vsketch.SketchClass):
                         x1Crossed = xPos
                         y1Crossed = yPos+yOff
                 else:  #draws char
-                    xDiff = self.drawChar(vsk, charList[charCount], xPos, yPos + yOff, yProg)
+                    thisCharH = thisLineCharSizeNoise*charH*rand.uniform(1/charSizeNoise, 1*charSizeNoise)*(1-yProg*maxShrink)  #the maximum theoretical height that this char could be
+                    xDiff = self.drawChar(vsk, charList[charCount], xPos, yPos + yOff, yProg, thisCharH)
                     xDiff += cairnLen
                     lineWiggle[math.floor(xPos) : math.floor(xPos + xDiff)] = [yOff]*(math.floor(xPos + xDiff) - math.floor(xPos))
                     xPos += xDiff
@@ -241,8 +249,6 @@ class AsemicSketch(vsketch.SketchClass):
                     prevLineWiggle[i] = max(0, prevLineWiggle[i]-charH*lineSpacing*(1-yProg*maxShrink))
                 else:
                     prevLineWiggle[i] = lineWiggle[i]
-
-            yPos += charH*lineSpacing*(1-(yProg*maxShrink)/1.2)  #moves down by one line
 
             
 
