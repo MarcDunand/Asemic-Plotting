@@ -21,16 +21,16 @@ wiggleMin, wiggleMax = -0.2, 0.25    #maximum verticle offset of one char from t
 lineMin, lineMax = -5, 3            #maximum horizontal offset from one line to the next
 lineSpacing = 1.3                  #verticle spacing between lines. 1 is no spacing
 spaceLen = 1.5                        #how long spaces between words are
-cairnLen = 0.2                     #how long spaces between characters are
-charTilt = 0.2                      #how much each char's verticle lines tilt as a ratio to their height
-charTiltNoise = 0.2                 #how much the tilt on a character's slashes varies
+cairnLen = 0.8                     #how long spaces between characters are
+charTilt = 0.4                      #how much each char's verticle lines tilt as a ratio to their height
+charTiltNoise = 0                 #how much the tilt on a character's slashes varies
 seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
 maxShrink = 0.3                     #how much smaller letters get at maximum over the height of the page
 scribbleSize = 1                    #how much larger than the characters are the scribbles that overlay them
 scribbleEnd = 0.7                   #chance of a scribble ending at the end of a word
 featureChance = 0.00                #chance of starting a feature
 scribbleChance = 1                  #given that a feature will be drawn, what is the chance that the feature is a scribble
-
+lineWeight = 0.45
 
 
 #used to generate consistent but random values for character generation. A charSeed will always generate the same char
@@ -91,7 +91,7 @@ class AsemicSketch(vsketch.SketchClass):
     #t: tilt, relative to e-s, how tilted is this slash in the x direction
     def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e, t):
         #vsk.line(x+h*s*t, y-h*s, x+h*e*t, y-h*e)
-        vsk.quad(x+h*s*t, y-h*s+0.15, x+h*e*t, y-h*e, x+h*e*t+0.15, y-h*e, x+h*s*t+0.15, y-h*s+0.15)
+        vsk.quad(x+h*s*t, y-h*s+lineWeight, x+h*e*t, y-h*e, x+h*e*t+lineWeight, y-h*e, x+h*s*t+lineWeight, y-h*s+lineWeight)
 
 
     #creates a tiny horizontal line branching from a verticle slash
@@ -100,7 +100,7 @@ class AsemicSketch(vsketch.SketchClass):
     #t: the tilt on this accent line
     def accentLine(self, vsk: vsketch.Vsketch, x, y, l, h, pos, t):
         #vsk.line(x+h*t*pos, y-h*pos, x+h*t*pos+l, y-h*pos)
-        vsk.rect(x+h*t*pos, y-h*pos, l+0.07, 0.15)
+        vsk.rect(x+h*t*pos+lineWeight/2, y-h*pos, l, lineWeight)
 
 
 
@@ -158,6 +158,7 @@ class AsemicSketch(vsketch.SketchClass):
 
         vsk.noStroke()
         vsk.fill(1)
+        vsk.penWidth(2)
 
         #sets the IDs for each of the chars on the page
         charSeedSet = []
