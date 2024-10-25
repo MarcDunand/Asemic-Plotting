@@ -5,7 +5,6 @@ import numpy as np
 from dataclasses import dataclass, replace
 from typing import List
 
-<<<<<<< Updated upstream
 pageLen = 270                       #the height of our writing block in mm
 lineLen = 210                       #the maximum length of a line of text
 aphabetLen = 10                     #the number of characters in the language's alphabet
@@ -14,30 +13,14 @@ dotProb = 0.2                       #chance of an accent being added in any give
 accLen = 0.6                        #how long horizontal strokes are
 charH = 3                           #maximum height of characters
 charSizeNoise = 1.05                #how much the size of letters can vary, 1 is no variation, n >= 1
-=======
-pageLen = 30                       #the height of our writing block in mm
-lineLen = 40                       #the maximum length of a line of text
-aphabetLen = 30                     #the number of characters in the language's alphabet
-vDiv = 6                            #number of verticle divisions there are on a character
-dotProb = 0.3                       #chance of an accent being added in any given spot
-accLen = 0.8                        #how long horizontal strokes are
-charH = 5.5                         #maximum height of characters
-charSizeNoise = 1.2                 #how much the size of letters can vary, 1 is no variation, n >= 1
-charSizeLineNoise = 1.4             #how much does the character size along an entire line vary (affects all characters on a line)
->>>>>>> Stashed changes
 wordStdv = 10                       #standard deviation of word length
 newLineChance = 0.025               #chance that the end of a word also triggers a new line
 drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
 wiggleMin, wiggleMax = -0.3, 0.35   #maximum verticle offset of one char from the next
 lineMin, lineMax = -5, 3            #maximum horizontal offset from one line to the next
 lineSpacing = 1.1                   #verticle spacing between lines. 1 is no spacing
-<<<<<<< Updated upstream
 spaceLen = 1                        #how long spaces between words are
 cairnLen = -0.5                        #how long spaces between characters are
-=======
-spaceLen = 1.5                      #how long spaces between words are
-cairnLen = -0.5                     #how long spaces between characters are
->>>>>>> Stashed changes
 charTilt = 0.2                      #how much each char's verticle lines tilt as a ratio to their height
 charTiltNoise = 0.03                #how much the tilt on a character's slashes varies
 seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
