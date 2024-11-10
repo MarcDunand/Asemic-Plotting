@@ -5,8 +5,8 @@ import numpy as np
 from dataclasses import dataclass, replace
 from typing import List
 
-pageLen = 10                       #the height of our writing block in mm
-lineLen = 60                       #the maximum length of a line of text
+pageLen = 270                       #the height of our writing block in mm
+lineLen = 180                       #the maximum length of a line of text
 aphabetLen = 30                     #the number of characters in the language's alphabet
 vDiv = 4                            #number of verticle divisions there are on a character
 dotProb = 0.2                       #chance of an accent being added in any given spot
@@ -90,8 +90,8 @@ class AsemicSketch(vsketch.SketchClass):
     #s: start %, what percent up h does this slash start, e: end %, what percent up h does this slash end
     #t: tilt, relative to e-s, how tilted is this slash in the x direction
     def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e, t):
-        #vsk.line(x+h*s*t, y-h*s, x+h*e*t, y-h*e)
-        vsk.quad(x+h*s*t, y-h*s+lineWeight, x+h*e*t, y-h*e, x+h*e*t+lineWeight, y-h*e, x+h*s*t+lineWeight, y-h*s+lineWeight)
+        vsk.line(x+h*s*t, y-h*s, x+h*e*t, y-h*e)
+        #vsk.quad(x+h*s*t, y-h*s+lineWeight, x+h*e*t, y-h*e, x+h*e*t+lineWeight, y-h*e, x+h*s*t+lineWeight, y-h*s+lineWeight)
 
 
     #creates a tiny horizontal line branching from a verticle slash
@@ -99,8 +99,8 @@ class AsemicSketch(vsketch.SketchClass):
     #h: the theoretical maximum slash height, pos: at what percent of h this accent is placed
     #t: the tilt on this accent line
     def accentLine(self, vsk: vsketch.Vsketch, x, y, l, h, pos, t):
-        #vsk.line(x+h*t*pos, y-h*pos, x+h*t*pos+l, y-h*pos)
-        vsk.rect(x+h*t*pos+lineWeight/2, y-h*pos, l, lineWeight)
+        vsk.line(x+h*t*pos, y-h*pos, x+h*t*pos+l, y-h*pos)
+        #vsk.rect(x+h*t*pos+lineWeight/2, y-h*pos, l, lineWeight)
 
 
 
