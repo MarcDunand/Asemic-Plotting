@@ -5,30 +5,30 @@ import numpy as np
 from dataclasses import dataclass, replace
 from typing import List
 
-pageLen = 270                       #the height of our writing block in mm
-lineLen = 180                       #the maximum length of a line of text
+pageLen = 200                       #the height of our writing block in mm
+lineLen = 210                       #the maximum length of a line of text
 aphabetLen = 30                     #the number of characters in the language's alphabet
 vDiv = 4                            #number of verticle divisions there are on a character
 dotProb = 0.2                       #chance of an accent being added in any given spot
-accLen = 0.8                        #how long horizontal strokes are
-charH = 4                           #maximum height of characters
-charSizeNoise = 1.1                #how much the size of letters can vary, 1 is no variation, n >= 1
-charSizeLineNoise = 1             #how much does the character size along an entire line vary (affects all characters on a line)
-wordStdv = 10                       #standard deviation of word length
-newLineChance = 0.01                #chance that the end of a word also triggers a new line
+accLen = 0.6                        #how long horizontal strokes are
+charH = 3                           #maximum height of characters
+charSizeNoise = 1.5                #how much the size of letters can vary, 1 is no variation, n >= 1
+charSizeLineNoise = 1.1             #how much does the character size along an entire line vary (affects all characters on a line)
+wordStdv = 7                       #standard deviation of word length
+newLineChance = 0.2                #chance that the end of a word also triggers a new line
 drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
-wiggleMin, wiggleMax = -0.2, 0.25    #maximum verticle offset of one char from the next
-lineMin, lineMax = -5, 3            #maximum horizontal offset from one line to the next
-lineSpacing = 1.3                  #verticle spacing between lines. 1 is no spacing
-spaceLen = 1.5                        #how long spaces between words are
-cairnLen = 0.8                     #how long spaces between characters are
-charTilt = 0.4                      #how much each char's verticle lines tilt as a ratio to their height
+wiggleMin, wiggleMax = -0.4, 0.4    #maximum verticle offset of one char from the next
+lineMin, lineMax = 0, 0            #maximum horizontal offset from one line to the next
+lineSpacing = 2.3                  #verticle spacing between lines. 1 is no spacing
+spaceLen = 1                        #how long spaces between words are
+cairnLen = -0.2                    #how long spaces between characters are
+charTilt = 0.3                      #how much each char's verticle lines tilt as a ratio to their height
 charTiltNoise = 0                 #how much the tilt on a character's slashes varies
 seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
-maxShrink = 0.3                     #how much smaller letters get at maximum over the height of the page
-scribbleSize = 1                    #how much larger than the characters are the scribbles that overlay them
-scribbleEnd = 0.7                   #chance of a scribble ending at the end of a word
-featureChance = 0.00                #chance of starting a feature
+maxShrink = 0                     #how much smaller letters get at maximum over the height of the page
+scribbleSize = 1.2                    #how much larger than the characters are the scribbles that overlay them
+scribbleEnd = 0.3                   #chance of a scribble ending at the end of a word
+featureChance = 0.2                #chance of starting a feature
 scribbleChance = 1                  #given that a feature will be drawn, what is the chance that the feature is a scribble
 lineWeight = 0.45
 
@@ -155,10 +155,6 @@ class AsemicSketch(vsketch.SketchClass):
     def draw(self, vsk: vsketch.Vsketch) -> None:
         vsk.size("letter", landscape=False)
         vsk.scale("mm")
-
-        vsk.noStroke()
-        vsk.fill(1)
-        vsk.penWidth(2)
 
         #sets the IDs for each of the chars on the page
         charSeedSet = []
