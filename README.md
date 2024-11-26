@@ -8,7 +8,7 @@ Research into generating convincing asemic script capable of being plotted on an
 1: In the command line, navigate to where you saved this repo
 
 2: Install vsketch
-    This can be done by running "pip install vsketch" in the command line
+    This can be done by running "pip install vsketch" or "pip3 install vsketch" in the command line
 
 3: Run "vsk run sketch_asemic.py"
 
