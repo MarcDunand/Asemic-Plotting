@@ -3,6 +3,8 @@ Research into generating convincing asemic script capable of being plotted on an
 
 
 
+
+
 # To generate your own asemic script:
 
 1: In the command line, navigate to where you saved this repo
@@ -13,6 +15,8 @@ Research into generating convincing asemic script capable of being plotted on an
 3: Run "vsk run sketch_asemic.py"
 
 4: To save a .svg of what you generate, press the "like!" button in the bottom right hand corner of the window that opens when you run the script
+
+
 
 
 
