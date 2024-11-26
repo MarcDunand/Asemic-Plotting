@@ -1,5 +1,5 @@
 # Asemic-Plotting
-Research into generating convincing asemic script capable of being plotted on an Axidraw\n\n
+Research into generating convincing asemic script capable of being plotted on an Axidraw
 
 <br><br>
 
@@ -23,5 +23,6 @@ Research into generating convincing asemic script capable of being plotted on an
 2: Near the top there is a long list of commented variable for you to play around with
   Whenever you save the file, vsketch will update the resulting asemic script automatically
 
+<br>
 
 Have fun and a special thank you to **PurpleMind** for the fantastic collab!
