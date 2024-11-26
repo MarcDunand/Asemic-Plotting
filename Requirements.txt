@@ -1,0 +1,3 @@
+To be able to run sketch_asemic.py please install:
+
+-vsketch (in the command line run: pip install vsketch)
