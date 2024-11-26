@@ -1,9 +1,7 @@
 # Asemic-Plotting
 Research into generating convincing asemic script capable of being plotted on an Axidraw\n\n
 
-
-
-
+<br><br>
 
 # To generate your own asemic script:
 
@@ -16,9 +14,7 @@ Research into generating convincing asemic script capable of being plotted on an
 
 4: To save a .svg of what you generate, press the "like!" button in the bottom right hand corner of the window that opens when you run the script
 
-
-
-
+<br><br>
 
 # To change what your asemic script looks like
 
