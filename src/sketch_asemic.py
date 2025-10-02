@@ -9,7 +9,7 @@ pageLen = 250                       #the height of our writing block in mm
 lineLen = 180                       #the maximum length of a line of text
 aphabetLen = 30                     #the number of characters in the language's alphabet
 vDiv = 4                            #number of verticle divisions there are on a character
-dotProb = 0.3                       #chance of an accent being added in any given spot
+dotProb = 0.2                       #chance of an accent being added in any given spot
 accLen = 0.8                        #how long horizontal strokes are
 charH = 5.5                           #maximum height of characters
 charSizeNoise = 1.1                #how much the size of letters can vary, 1 is no variation, n >= 1
