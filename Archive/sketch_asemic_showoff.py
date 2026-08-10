@@ -6,31 +6,31 @@ from dataclasses import dataclass, replace
 from typing import List
 
 
-pageLen = 260                       #the height of our writing block in mm
-lineLen = 190                       #the maximum length of a line of text
-aphabetLen = 30                     #the number of characters in the language's alphabet
-vDiv = 4                            #number of verticle divisions there are on a character
-branchProb = 0.2                       #chance of an accent being added in any given spot
-branchLen = 0.8                        #how long horizontal strokes are
-charHeight = 4                           #maximum height of characters
-charHeightNoise = 1.1                #how much the size of letters can vary, 1 is no variation, n >= 1
-charLineHeightNoise = 1             #how much does the character size along an entire line vary (affects all characters on a line)
-wordLenStdv = 10                       #standard deviation of word length
-newLineChance = 0.01                #chance that the end of a word also triggers a new line
-drawAlphabet = False                #determines if the alphabet of characters is drawn at the top
-wiggleMin, wiggleMax = -0.15, 0.2    #maximum verticle offset of one char from the next
-lineStartMin, lineStartMax = -5, 3            #maximum horizontal offset from one line to the next
-lineSpacing = 1.4                  #verticle spacing between lines. 1 is no spacing
-spaceLen = 1                        #how long spaces between words are
-kerning = -0.2                     #how long spaces between characters are
-charTilt = 0.3                      #how much each char's verticle lines tilt as a ratio to their height
-charTiltNoise = 0                 #how much the tilt on a character's slashes varies
-seedLen = 50                        #how many numbers are generated to determine the shape of a char in the alphabet, just make sure this is big enough that no error occures
+pageLen = 260                           #the height of our writing block in mm
+lineLen = 190                           #the maximum length of a line of text
+aphabetLen = 30                         #the number of characters in the language's alphabet
+vDiv = 4                                #number of verticle divisions there are on a character
+branchProb = 0.2                        #chance of an accent being added in any given spot
+branchLen = 0.8                         #how long horizontal strokes are
+charHeight = 4                          #maximum height of characters
+charHeightNoise = 1.1                   #how much the size of letters can vary, 1 is no variation, n >= 1
+charLineHeightNoise = 1                 #how much does the character size along an entire line vary
+wordLenStdv = 10                        #standard deviation of word length
+newLineChance = 0.01                    #chance that the end of a word also triggers a new line
+drawAlphabet = False                    #determines if the alphabet of characters is drawn at the top
+wiggleMin, wiggleMax = -0.15, 0.2       #maximum verticle offset of one char from the next
+lineStartMin, lineStartMax = -5, 3      #maximum horizontal offset from one line to the next
+lineSpacing = 1.4                       #verticle spacing between lines. 1 is no spacing
+spaceLen = 1                            #how long spaces between words are
+kerning = -0.2                          #how long spaces between characters are
+charTilt = 0.3                          #how much each char's verticle lines tilt as a ratio to their height
+charTiltNoise = 0                       #how much the tilt on a character's slashes varies
+seedLen = 50                            #how many numbers are generated to determine the shape of a char in the alphabet
 maxCharShrink = 0.3                     #how much smaller letters get at maximum over the height of the page
-scribbleSize = 1                    #how much larger than the characters are the scribbles that overlay them
-scribbleEnd = 0.7                   #chance of a scribble ending at the end of a word
-scribbleChance = 0                  #given that a feature will be drawn, what is the chance that the feature is a scribble
-lineWeight = 0.45                   #determines how wide the displayed line is
+scribbleSize = 1                        #how much larger than the characters are the scribbles that overlay them
+scribbleEnd = 0.7                       #chance of a scribble ending at the end of a word
+scribbleChance = 0                      #given that a feature will be drawn, chance that the feature is a scribble
+lineWeight = 0.45                       #determines how wide the displayed line is
 
 
 #used to generate consistent but random values for character generation. A charSeed will always generate the same char
@@ -88,7 +88,6 @@ class AsemicSketch(vsketch.SketchClass):
     #t: tilt, relative to e-s, how tilted is this slash in the x direction
     def slash(self, vsk: vsketch.Vsketch, x, y, h, s, e, t):
         vsk.line(x+h*s*t, y-h*s, x+h*e*t, y-h*e)
-        #vsk.quad(x+h*s*t, y-h*s+lineWeight, x+h*e*t, y-h*e, x+h*e*t+lineWeight, y-h*e, x+h*s*t+lineWeight, y-h*s+lineWeight)
 
 
     #creates a tiny horizontal line branching from a vertical slash
@@ -97,21 +96,20 @@ class AsemicSketch(vsketch.SketchClass):
     #t: the tilt on this accent line
     def accentLine(self, vsk: vsketch.Vsketch, x, y, l, h, pos, t):
         vsk.line(x+h*t*pos, y-h*pos, x+h*t*pos+l, y-h*pos)
-        #vsk.rect(x+h*t*pos+lineWeight/2, y-h*pos, l, lineWeight)
 
 
     def drawChar(self, vsk: vsketch.Vsketch, charSeed, xPos, yPos, yProg, thischarHeight):
-        w = 1                                                                   #width of the character in # of vertical slashes
-        #thischarHeight = charHeight*rand.uniform(1/charHeightNoise, 1*charHeightNoise)*(1-yProg*maxCharShrink)        
+        w = 1  #width of the character in # of vertical slashes
         thisCharTilt = charTilt + rand.uniform(-charTiltNoise, charTiltNoise)   #the tilt that this char is at
-        maxh = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))   #the actual height of this char as a percentage of thischarHeight
-        
-        self.slash(vsk, xPos, yPos, thischarHeight, 0, maxh/vDiv, thisCharTilt)      #draws the base slash that all chars have
+        #the actual height of this char as a percentage of thischarHeight
+        maxh = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))
+        #draws the base slash that all chars have
+        self.slash(vsk, xPos, yPos, thischarHeight, 0, maxh/vDiv, thisCharTilt)
         
         if charSeed.query() < 0.5:  #conditionally adds a second slash
             w = 2
-            accentS = int(charSeed.query()*(maxh-1))  #should be equivalent to above line
-            accentE = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))  #should be equivalent to above line
+            accentS = int(charSeed.query()*(maxh-1))
+            accentE = math.ceil(vDiv/2) + int(charSeed.query()*math.floor(vDiv/2+1))
             self.slash(vsk, xPos+branchLen, yPos, thischarHeight, accentS/vDiv, accentE/vDiv, thisCharTilt)
             for p in range(maxh+1):
                 if charSeed.query() < branchProb:
@@ -149,7 +147,8 @@ class AsemicSketch(vsketch.SketchClass):
             charSeedSet.append(CharSeed(vals=seedVals, idx = 0))
 
         charList = []  #pregenerates all characters that will be written (with some extra padding)
-        wordLen = int(abs(np.random.normal(0, wordLenStdv))) + 1  #rolling value that determines how long the next word will be
+        #rolling value that determines how long the next word will be
+        wordLen = int(abs(np.random.normal(0, wordLenStdv))) + 1
         charCount = 0
         for i in range(lineLen*int(pageLen/(charHeight*(1-maxCharShrink)))):
             if charCount < wordLen:  #adds character
@@ -187,19 +186,23 @@ class AsemicSketch(vsketch.SketchClass):
             y1Crossed = -1
             thisLinecharHeightNoise = rand.uniform(1/charLineHeightNoise, 1*charLineHeightNoise)
 
-            yPos += thisLinecharHeightNoise*charHeight*lineSpacing*(1-(yProg*maxCharShrink)/2.2)  #moves down by one line
+            #moves down by one line
+            yPos += thisLinecharHeightNoise*charHeight*lineSpacing*(1-(yProg*maxCharShrink)/2.2)
 
             while xPos < lineLen and not newLine:  #until end of line
                 if int(xPos) - 1 == -1:  #if at the start of line determine yoffset independently of previous character
                     yOff = max(prevLineWiggle[math.floor(xPos)], rand.uniform(10*wiggleMin, 10*wiggleMax))
                 else:                    #otherwise determine it based on prev char
                     #if theres a big gap between this line and the above line, raise the current line to meet it faster
-                    if abs((prevLineWiggle[math.floor(xPos)])-((lineWiggle[int(xPos) - 1]) + rand.uniform(wiggleMin, wiggleMax*(1+yProg)))) > 3:
+                    if abs((prevLineWiggle[math.floor(xPos)])-((lineWiggle[int(xPos) - 1]) + 
+                        rand.uniform(wiggleMin, wiggleMax*(1+yProg)))) > 3:
                         #determine y offset in terms of previous char and the char above
-                        yOff = max(prevLineWiggle[math.floor(xPos)], (lineWiggle[int(xPos) - 1]) + rand.uniform(wiggleMin*2, wiggleMax*(1+yProg)))
+                        yOff = max(prevLineWiggle[math.floor(xPos)], (lineWiggle[int(xPos) - 1])
+                                + rand.uniform(wiggleMin*2, wiggleMax*(1+yProg)))
                     else:
                         #determine y offset in terms of previous char and the char above
-                        yOff = max(prevLineWiggle[math.floor(xPos)], (lineWiggle[int(xPos) - 1]) + rand.uniform(wiggleMin, wiggleMax*(1+yProg)))
+                        yOff = max(prevLineWiggle[math.floor(xPos)], (lineWiggle[int(xPos) - 1])
+                                + rand.uniform(wiggleMin, wiggleMax*(1+yProg)))
 
                 if yPos + yOff >= pageLen:  #if hit bottom of page
                     break
@@ -207,21 +210,26 @@ class AsemicSketch(vsketch.SketchClass):
                 if charList[charCount] == -2:  #starts newline
                     newLine = True
                 elif charList[charCount] == -1:  #draws space
-                    lineWiggle[math.floor(xPos) : math.floor(xPos + spaceLen)] = [yOff]*(math.floor(xPos + spaceLen)-math.floor(xPos))
+                    lineWiggle[math.floor(xPos) :
+                                math.floor(xPos + spaceLen)] = [yOff]*(math.floor(xPos + spaceLen)-math.floor(xPos))
                     xPos += spaceLen
                     
                     if x1Crossed != -1 and rand.random() < scribbleEnd:
-                        self.drawScribble(vsk, x1Crossed, y1Crossed, xPos-spaceLen, yPos+yOff, charHeight*(1-yProg*maxCharShrink)*scribbleSize, 0.4, 0.6, 2)
+                        self.drawScribble(vsk, x1Crossed, y1Crossed, xPos-spaceLen, yPos+yOff, 
+                                          charHeight*(1-yProg*maxCharShrink)*scribbleSize, 0.4, 0.6, 2)
                         x1Crossed = -1
                         y1Crossed = -1
                     elif x1Crossed == -1 and rand.random() < scribbleChance:
                         x1Crossed = xPos
                         y1Crossed = yPos+yOff
                 else:  #draws char
-                    thischarHeight = thisLinecharHeightNoise*charHeight*rand.uniform(1/charHeightNoise, 1*charHeightNoise)*(1-yProg*maxCharShrink)  #the maximum theoretical height that this char could be
+                    #the maximum theoretical height that this char could be
+                    thischarHeight = thisLinecharHeightNoise*charHeight*rand.uniform(1/charHeightNoise, 
+                                                                    1*charHeightNoise)*(1-yProg*maxCharShrink)
                     xDiff = self.drawChar(vsk, charList[charCount], xPos, yPos + yOff, yProg, thischarHeight)
                     xDiff += kerning
-                    lineWiggle[math.floor(xPos) : math.floor(xPos + xDiff)] = [yOff]*(math.floor(xPos + xDiff) - math.floor(xPos))
+                    lineWiggle[math.floor(xPos) : 
+                               math.floor(xPos + xDiff)] = [yOff]*(math.floor(xPos + xDiff) - math.floor(xPos))
                     xPos += xDiff
 
 
